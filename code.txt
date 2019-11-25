@@ -1,0 +1,166 @@
+register_table = {
+	'zero' : '00000',
+	'at'   : '00001',
+	'v0'   : '00010',
+	'v1'   : '00011',
+	'a0'   : '00100',
+	'a1'   : '00101',
+	'a2'   : '00110',
+	'a3'   : '00111',
+	't0'   : '01000',
+	't1'   : '01001',
+	't2'   : '01010',
+	't3'   : '01011',
+	't4'   : '01100',
+	't5'   : '01101',
+	't6'   : '01110',
+	't7'   : '01111',
+	's0'   : '10000',
+	's1'   : '10001',
+	's2'   : '10010',
+	's3'   : '10011',
+	's4'   : '10100',
+    's5'   : '10101',
+	's6'   : '10110',
+	's7'   : '10111',
+	't8'   : '11000',
+	't9'   : '11001',
+	'k0'   : '11010',
+	'k1'   : '11011',
+    'gp'   : '11100',
+	'sp'   : '11101',
+	'fp'   : '11110',
+    'ra'   : '11111'
+	}
+
+myFile = open('mips.txt', 'r+')
+myfile2=open('D:\3rd comp\fun.txt','w')
+instruction = myFile.readlines()
+instruction_length=len(instruction)
+
+for i in range(0,instruction_length):
+   if instruction[i].find("(") !=-1:
+       instruction[i]=  instruction[i].replace('(',' ') 
+       instruction[i]= instruction[i].replace(')',' ')
+   
+    
+   parts =instruction[i].split()
+   if instruction[i].find("add ") !=-1 or instruction[i].find("and") !=-1 or instruction[i].find("or ") !=-1 or instruction[i].find("sll") !=-1 or instruction[i].find("slt") !=-1or instruction[i].find("jr") !=-1: 
+      opcode="000000"
+    
+      if instruction[i].find("add ") !=-1: 
+          
+         function="100000"
+         schamt="00000"
+         rt=register_table[parts[3]]
+         rd=register_table[parts[1]]
+         rs=register_table[parts[2]]
+      elif instruction[i].find("and") !=-1:
+              function="100001"
+              schamt="00000"
+              rt=register_table[parts[3]]
+              rd=register_table[parts[1]]
+              rs=register_table[parts[2]]
+      elif instruction[i].find("or ") !=-1:
+              schamt="00000"
+              function="100111"
+              rt=register_table[parts[3]]
+              rd=register_table[parts[1]]
+              rs=register_table[parts[2]]
+      elif instruction[i].find("sll") !=-1:
+            rt="00000"
+            function="000000"
+            rd=register_table[parts[1]]
+            rs=register_table[parts[2]]
+            amt=str(bin(int(float(parts[3])))).replace('0b','')
+            tot=len(amt)
+            add=''
+            while tot < 5:
+                 add='0'+add
+                 tot=tot+1
+            amt=add+amt
+            schamt=amt
+      elif instruction[i].find("jr") !=-1:
+        
+              function="001000"
+              rd=register_table[parts[1]]
+              rt="00000"
+              rs="00000"
+              schamt="00000"
+      elif instruction[i].find("slt") !=-1:
+          function="101010"
+          schamt="00000"
+          rd=register_table[parts[1]]
+          rt=register_table[parts[2]]
+          rs=register_table[parts[3]]
+      output =opcode+rt+rs+rd+schamt+function
+      myfile2.write(output)
+      myfile2.write('\n') 
+     
+       
+   elif  instruction[i].find("j ") !=-1:
+         opcode="000010"
+         amt=str(bin(int(float(instruction[i][2:])))).replace('0b','')
+         tot=len(amt)
+         add=''
+         while tot < 26:
+            add='0'+add
+            tot=tot+1
+         amt=add+amt          
+         output =opcode+amt
+         myfile2.write(output)
+         myfile2.write('\n') 
+   
+   elif  instruction[i].find("jal") !=-1:
+         opcode="000011"
+         amt=str(bin(int(float(instruction[i][4:])))).replace('0b','')
+         tot=len(amt)
+         add=''
+         while tot < 26:
+            add='0'+add
+            tot=tot+1
+         amt=add+amt          
+         output =opcode+amt
+         myfile2.write(output)
+         myfile2.write('\n') 
+   
+   elif  instruction[i].find("ori") !=-1 or  instruction[i].find("addi") !=-1 or  instruction[i].find("beq") !=-1 :
+       if  instruction[i].find("addi") !=-1:
+            opcode="001000"
+       elif  instruction[i].find("ori") !=-1:
+             opcode="001101"
+       elif instruction[i].find("beq") !=-1 :
+           opcode="000100"
+       rd=register_table[parts[1]]
+       rs=register_table[parts[2]]
+       amt=str(bin(int(float(parts[3])))).replace('0b','')
+       tot=len(amt)
+       add=''
+       while tot < 16:
+            add='0'+add
+            tot=tot+1
+       amt=add+amt          
+       output =opcode+rd+rs+amt
+       myfile2.write(output)
+       myfile2.write('\n') 
+   
+   
+   
+   elif  instruction[i].find("sw") !=-1 or  instruction[i].find("lw") !=-1 :
+   
+       if  instruction[i].find("sw") !=-1:
+            opcode="101011"
+       elif  instruction[i].find("lw") !=-1:
+              opcode="100011"
+       rd=register_table[parts[1]]
+       rs=register_table[parts[3]]
+       amt=str(bin(int(float(parts[2])))).replace('0b','')
+       tot=len(amt)
+       add=''
+       while tot < 16:
+            add='0'+add
+            tot=tot+1
+       amt=add+amt          
+       output =opcode+rd+rs+amt
+       myfile2.write(output)
+       myfile2.write('\n')
